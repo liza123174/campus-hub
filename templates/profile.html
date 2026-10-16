@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}My profile{% endblock %}
+{% block content %}
+<div class="page-wrap">
+  <div class="topbar"><span class="breadcrumb-label">STUDENT SPACE <span>/</span> MY PROFILE</span><span class="profile-status"><i class="bi bi-check-circle-fill"></i> Student account</span></div>
+  <section class="page-intro"><span class="eyebrow">YOUR CAMPUS IDENTITY</span><h1>My profile</h1><p>Manage the details connected to your student account.</p></section>
+  <div class="profile-layout">
+    <section class="content-card profile-card">
+      <div class="profile-identity"><span class="profile-avatar">{{ student.name[:1]|upper }}</span><div><h2>{{ student.name }}</h2><p>{{ student.department }}</p></div></div>
+      <form method="post" class="form-stack profile-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="name">Full name</label><input class="form-control" id="name" name="name" value="{{ student.name }}" maxlength="80" required>
+        <label for="email">College email</label><input class="form-control" id="email" value="{{ student.email }}" disabled aria-describedby="email-help"><small id="email-help" class="form-text">Email changes are not available in this prototype.</small>
+        <label for="department">Department</label><input class="form-control" id="department" name="department" value="{{ student.department }}" maxlength="80" required>
+        <button class="btn btn-primary profile-save" type="submit">Save changes <i class="bi bi-check2"></i></button>
+      </form>
+    </section>
+    <aside class="content-card profile-aside"><span class="aside-icon"><i class="bi bi-shield-lock"></i></span><h2>Your account</h2><p>Your password is stored as a secure hash and is never displayed. Profile updates are saved to your local Campus Hub database.</p><div class="profile-aside-note"><i class="bi bi-info-circle"></i> College email-domain restrictions can be configured for a real college deployment.</div></aside>
+  </div>
+</div>
+{% endblock %}

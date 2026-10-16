@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit listing' if listing else 'Create listing' }}{% endblock %}
+{% block content %}
+<div class="page-wrap detail-wrap">
+  <div class="topbar"><a class="back-link" href="{{ url_for('exchange_hub') }}"><i class="bi bi-arrow-left"></i> Back to Exchange Hub</a><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div>
+  <section class="content-card community-form-card">
+    <div class="page-intro"><span class="eyebrow">CAMPUS COMMUNITY</span><h1>{{ 'Edit your listing' if listing else 'List an item' }}</h1><p>Give another student the details they need to decide if it’s right for them.</p></div>
+    <form method="post" enctype="multipart/form-data" class="community-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="title">Item title</label><input class="form-control" id="title" name="title" value="{{ form.get('title', '') }}" maxlength="100" required placeholder="e.g. Intro to Biology textbook">
+      <label for="description">Description</label><textarea class="form-control" id="description" name="description" rows="5" maxlength="2000" required placeholder="Describe the item's condition and any useful details.">{{ form.get('description', '') }}</textarea>
+      <div class="community-fields-row">
+        <div><label for="category">Category</label><select class="form-select" id="category" name="category" required><option value="">Choose a category</option>{% for category in categories %}<option value="{{ category }}" {% if form.get('category') == category %}selected{% endif %}>{{ category }}</option>{% endfor %}</select></div>
+        <div><label for="price">Price (USD)</label><div class="price-input"><span>$</span><input class="form-control" id="price" name="price" type="number" min="0" max="1000000" step="0.01" value="{{ form.get('price', '0.00') }}" required><small>Enter 0 for free</small></div></div>
+      </div>
+      {% if listing %}<div><label for="status">Availability</label><select class="form-select" id="status" name="status" required><option value="available" {% if form.get('status') == 'available' %}selected{% endif %}>Available</option><option value="sold" {% if form.get('status') == 'sold' %}selected{% endif %}>Sold</option><option value="exchanged" {% if form.get('status') == 'exchanged' %}selected{% endif %}>Exchanged</option></select></div>{% endif %}
+      {% if listing and listing.image_filename %}<div class="existing-image"><img src="{{ url_for('static', filename='uploads/' ~ listing.image_filename) }}" alt="Current {{ listing.title }} image"><span>Current image is kept unless you upload a replacement.</span></div>{% endif %}
+      <div><label for="image">Item image <span class="optional-label">Optional</span></label><input class="form-control" id="image" name="image" type="file" accept="image/png,image/jpeg,image/gif,image/webp"><small class="field-help">PNG, JPEG, GIF, or WebP · maximum 2 MB. Images are checked on the server.</small></div>
+      <div class="form-actions"><button class="btn btn-primary" type="submit">{{ 'Save changes' if listing else 'Post listing' }}</button><a class="btn btn-light" href="{{ url_for('exchange_detail', listing_id=listing.id) if listing else url_for('exchange_hub') }}">Cancel</a></div>
+    </form>
+  </section>
+</div>
+{% endblock %}

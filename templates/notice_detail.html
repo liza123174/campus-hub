@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ notice.title }}{% endblock %}
+{% block content %}
+<div class="page-wrap detail-wrap">
+  <div class="topbar"><a class="back-link" href="{{ url_for('notices') }}"><i class="bi bi-arrow-left"></i> Back to notices</a><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div>
+  <article class="content-card detail-card">
+    <div class="detail-icon"><i class="bi bi-megaphone"></i></div><div class="listing-meta"><span class="category-badge">{{ notice.category }}</span><span>Published {{ notice.published_at }}</span></div>
+    <h1>{{ notice.title }}</h1><div class="detail-body">{{ notice.description }}</div>
+    <div class="detail-callout"><i class="bi bi-info-circle"></i><span>For questions about this announcement, contact your college’s relevant office.</span></div>
+  </article>
+</div>
+{% endblock %}

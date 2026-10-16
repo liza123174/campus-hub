@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Notice board{% endblock %}
+{% block content %}
+<div class="page-wrap">
+  <div class="topbar"><span class="breadcrumb-label">STUDENT SPACE <span>/</span> NOTICE BOARD</span><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div>
+  <section class="page-intro"><span class="eyebrow">CAMPUS UPDATES</span><h1>Notice board</h1><p>Important updates and announcements from around campus.</p></section>
+  <form class="filter-bar" method="get">
+    <div class="search-field"><i class="bi bi-search"></i><input name="q" value="{{ search }}" placeholder="Search notice titles..." aria-label="Search notice titles"></div>
+    <select name="category" aria-label="Filter notices by category"><option value="">All categories</option>{% for item in categories %}<option value="{{ item.category }}" {% if selected_category == item.category %}selected{% endif %}>{{ item.category }}</option>{% endfor %}</select>
+    <button class="btn btn-primary filter-button" type="submit">Apply filters</button>
+    {% if search or selected_category %}<a class="clear-filters" href="{{ url_for('notices') }}">Clear</a>{% endif %}
+  </form>
+  <div class="results-heading"><strong>{{ notices|length }} notice{{ '' if notices|length == 1 else 's' }}</strong><span>Latest updates first</span></div>
+  <div class="notice-list-page">
+    {% for notice in notices %}
+    <article class="listing-card notice-listing"><span class="notice-symbol large-notice-symbol"><i class="bi bi-megaphone"></i></span><div class="listing-main"><div class="listing-meta"><span class="category-badge">{{ notice.category }}</span><span>{{ notice.published_at }}</span></div><h2><a href="{{ url_for('notice_detail', notice_id=notice.id) }}">{{ notice.title }}</a></h2><p>{{ notice.description|truncate(210) }}</p><a class="text-link" href="{{ url_for('notice_detail', notice_id=notice.id) }}">Read announcement <i class="bi bi-arrow-right"></i></a></div></article>
+    {% else %}<div class="content-card empty-state page-empty"><span class="empty-icon"><i class="bi bi-search"></i></span><h2>No notices found</h2><p>Try a different search or category, or clear your filters.</p><a class="btn btn-outline-primary" href="{{ url_for('notices') }}">Clear filters</a></div>{% endfor %}
+  </div>
+</div>
+{% endblock %}

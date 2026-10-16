@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ placement.role }}{% endblock %}
+{% block content %}
+<div class="page-wrap detail-wrap">
+  <div class="topbar"><a class="back-link" href="{{ url_for('placements') }}"><i class="bi bi-arrow-left"></i> Back to placements</a><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div>
+  <article class="content-card detail-card">
+    <div class="detail-icon placement-detail-icon"><i class="bi bi-buildings"></i></div><div class="listing-meta"><span class="category-badge">Campus drive · Demo listing</span><span>Apply by {{ placement.deadline }}</span></div>
+    <h1>{{ placement.role }}</h1><p class="detail-subtitle">{{ placement.company }}</p>
+    <div class="detail-facts"><div><small>LOCATION</small><strong>{{ placement.location }}</strong></div><div><small>APPLICATION DEADLINE</small><strong>{{ placement.deadline }}</strong></div><div><small>DRIVE DATE</small><strong>{{ placement.drive_date }}</strong></div></div>
+    <h2>About this opportunity</h2><div class="detail-body">{{ placement.description }}</div>
+    <h2>Eligibility</h2><div class="detail-body">{{ placement.eligibility }}</div>
+    <div class="detail-callout"><i class="bi bi-info-circle"></i><span>This is illustrative demo data. Confirm current openings and eligibility with your campus Career Services office.</span></div>
+  </article>
+</div>
+{% endblock %}

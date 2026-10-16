@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Exchange hub{% endblock %}
+{% block content %}
+<div class="page-wrap">
+  <div class="topbar"><span class="breadcrumb-label">STUDENT SPACE <span>/</span> EXCHANGE HUB</span><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div>
+  <section class="page-intro"><span class="eyebrow">SHARE, SWAP, SAVE</span><h1>Exchange hub</h1><p>Find useful student essentials or pass something along to another student.</p></section>
+  <div class="module-actions"><a class="btn btn-primary" href="{{ url_for('exchange_create') }}"><i class="bi bi-plus-lg"></i> Create a listing</a><span>Student-to-student listings. Coordinate exchanges safely in a public campus place.</span></div>
+  <form class="filter-bar community-filter" method="get">
+    <div class="search-field"><i class="bi bi-search"></i><input name="q" value="{{ search }}" placeholder="Search items and descriptions..." aria-label="Search exchange listings"></div>
+    <select name="category" aria-label="Filter by category"><option value="">All categories</option>{% for category in categories %}<option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>{% endfor %}</select>
+    <select name="price" aria-label="Filter by price"><option value="">Any price</option><option value="free" {% if selected_price == 'free' %}selected{% endif %}>Free</option><option value="priced" {% if selected_price == 'priced' %}selected{% endif %}>Priced</option></select>
+    <button class="btn btn-primary filter-button" type="submit">Filter</button>
+    {% if search or selected_category or selected_price %}<a class="clear-filters" href="{{ url_for('exchange_hub') }}">Clear</a>{% endif %}
+  </form>
+  <div class="results-heading"><strong>{{ listings|length }} available item{{ '' if listings|length == 1 else 's' }}</strong><span>Newest listings first</span></div>
+  <div class="community-card-grid">
+    {% for listing in listings %}
+    <article class="content-card community-card">
+      {% if listing.image_filename %}<a class="community-image" href="{{ url_for('exchange_detail', listing_id=listing.id) }}"><img src="{{ url_for('static', filename='uploads/' ~ listing.image_filename) }}" alt="{{ listing.title }}"></a>
+      {% else %}<a class="community-image image-placeholder" href="{{ url_for('exchange_detail', listing_id=listing.id) }}" aria-label="View {{ listing.title }}"><i class="bi bi-box-seam"></i></a>{% endif %}
+      <div class="community-card-content">
+        <div class="listing-meta"><span class="category-badge">{{ listing.category }}</span><span class="status-badge available-badge">Available</span></div>
+        <h2><a href="{{ url_for('exchange_detail', listing_id=listing.id) }}">{{ listing.title }}</a></h2>
+        <p>{{ listing.description|truncate(125) }}</p>
+        <div class="exchange-card-bottom"><span class="item-price">{% if listing.price == 0 %}Free{% else %}${{ '%.2f'|format(listing.price) }}{% endif %}</span><span>by {{ listing.seller_name }}</span></div>
+        <div class="community-card-footer"><span><i class="bi bi-calendar3"></i> {{ listing.created_at[:10] }}</span><a href="{{ url_for('exchange_detail', listing_id=listing.id) }}">Details <i class="bi bi-arrow-right"></i></a></div>
+      </div>
+    </article>
+    {% else %}<div class="content-card empty-state page-empty"><span class="empty-icon"><i class="bi bi-box-seam"></i></span><h2>No items found</h2><p>Try another search or category, or add the first listing.</p><a class="btn btn-primary" href="{{ url_for('exchange_create') }}">Create a listing</a></div>{% endfor %}
+  </div>
+</div>
+{% endblock %}

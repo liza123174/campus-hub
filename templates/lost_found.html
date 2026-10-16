@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Lost &amp; Found{% endblock %}
+{% block content %}
+<div class="page-wrap">
+  <div class="topbar"><span class="breadcrumb-label">STUDENT SPACE <span>/</span> LOST &amp; FOUND</span><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div>
+  <section class="page-intro"><span class="eyebrow">LOOK OUT FOR EACH OTHER</span><h1>Lost &amp; Found</h1><p>Share a lost item report or help reunite a found item with its owner.</p></section>
+  <div class="module-actions"><a class="btn btn-primary" href="{{ url_for('lost_found_create') }}"><i class="bi bi-plus-lg"></i> Create a report</a><span>Keep personal details private. Arrange any handoff in a public campus location.</span></div>
+  <form class="filter-bar community-filter" method="get">
+    <div class="search-field"><i class="bi bi-search"></i><input name="q" value="{{ search }}" placeholder="Search items, details, or location..." aria-label="Search Lost and Found"></div>
+    <select name="type" aria-label="Filter by Lost or Found"><option value="">Lost and Found</option><option value="Lost" {% if selected_type == 'Lost' %}selected{% endif %}>Lost items</option><option value="Found" {% if selected_type == 'Found' %}selected{% endif %}>Found items</option></select>
+    <select name="category" aria-label="Filter by category"><option value="">All categories</option>{% for category in categories %}<option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>{% endfor %}</select>
+    <select name="status" aria-label="Filter by report status"><option value="active" {% if selected_status == 'active' %}selected{% endif %}>Active</option><option value="resolved" {% if selected_status == 'resolved' %}selected{% endif %}>Resolved</option><option value="all" {% if selected_status == 'all' %}selected{% endif %}>All statuses</option></select>
+    <button class="btn btn-primary filter-button" type="submit">Filter</button>
+    {% if search or selected_type or selected_category or selected_status != 'active' %}<a class="clear-filters" href="{{ url_for('lost_found_hub') }}">Clear</a>{% endif %}
+  </form>
+  <div class="results-heading"><strong>{{ reports|length }} report{{ '' if reports|length == 1 else 's' }}</strong><span>Newest reports first</span></div>
+  <div class="community-card-grid">
+    {% for report in reports %}
+    <article class="content-card community-card">
+      {% if report.image_filename %}<a class="community-image" href="{{ url_for('lost_found_detail', report_id=report.id) }}"><img src="{{ url_for('static', filename='uploads/' ~ report.image_filename) }}" alt="{{ report.item_name }}"></a>
+      {% else %}<a class="community-image image-placeholder" href="{{ url_for('lost_found_detail', report_id=report.id) }}" aria-label="View {{ report.item_name }}"><i class="bi bi-search-heart"></i></a>{% endif %}
+      <div class="community-card-content">
+        <div class="listing-meta"><span class="report-type-badge {{ 'found-badge' if report.report_type == 'Found' else 'lost-badge' }}">{{ report.report_type }}</span><span class="status-badge {{ 'available-badge' if report.status == 'active' else 'inactive-badge' }}">{{ report.status|title }}</span><span class="category-badge">{{ report.category }}</span></div>
+        <h2><a href="{{ url_for('lost_found_detail', report_id=report.id) }}">{{ report.item_name }}</a></h2>
+        <p>{{ report.description|truncate(125) }}</p>
+        <div class="report-location"><i class="bi bi-geo-alt"></i> {{ report.location }} <span>·</span> {{ report.incident_date }}</div>
+        <div class="community-card-footer"><span>Reported by {{ report.reporter_name }}</span><a href="{{ url_for('lost_found_detail', report_id=report.id) }}">Details <i class="bi bi-arrow-right"></i></a></div>
+      </div>
+    </article>
+    {% else %}<div class="content-card empty-state page-empty"><span class="empty-icon"><i class="bi bi-search-heart"></i></span><h2>No reports found</h2><p>Try another filter, or create a report to help your campus community.</p><a class="btn btn-primary" href="{{ url_for('lost_found_create') }}">Create a report</a></div>{% endfor %}
+  </div>
+</div>
+{% endblock %}

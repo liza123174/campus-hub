@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Overview{% endblock %}
+{% block content %}
+<div class="page-wrap">
+  <div class="topbar"><div><span class="breadcrumb-label">STUDENT SPACE <span>/</span> OVERVIEW</span></div><div class="topbar-right"><span class="today-label"><i class="bi bi-calendar3"></i> {{ today }}</span><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div></div>
+  <section class="welcome-row">
+    <div><span class="eyebrow">YOUR CAMPUS AT A GLANCE</span><h1>Good to see you, {{ current_student.name.split()[0] }} <span class="wave">✦</span></h1><p>Here’s what’s happening around campus today.</p></div>
+    <a class="btn btn-primary welcome-action" href="{{ url_for('internships') }}"><i class="bi bi-compass"></i> Find an opportunity</a>
+  </section>
+  <section class="stats-grid" aria-label="Campus summary">
+    <a class="stat-card" href="{{ url_for('internships') }}"><span class="stat-icon stat-blue"><i class="bi bi-briefcase"></i></span><span class="stat-copy"><small>OPEN INTERNSHIPS</small><strong>{{ internship_count }}</strong><span>Browse opportunities <i class="bi bi-arrow-up-right"></i></span></span><span class="stat-trend"><i class="bi bi-arrow-up-right"></i></span></a>
+    <a class="stat-card" href="{{ url_for('placements') }}"><span class="stat-icon stat-purple"><i class="bi bi-buildings"></i></span><span class="stat-copy"><small>PLACEMENT DRIVES</small><strong>{{ placement_count }}</strong><span>Explore placements <i class="bi bi-arrow-up-right"></i></span></span><span class="stat-trend"><i class="bi bi-arrow-up-right"></i></span></a>
+    <a class="stat-card" href="{{ url_for('notices') }}"><span class="stat-icon stat-amber"><i class="bi bi-megaphone"></i></span><span class="stat-copy"><small>CAMPUS NOTICES</small><strong>{{ notice_count }}</strong><span>See what’s new <i class="bi bi-arrow-up-right"></i></span></span><span class="stat-trend"><i class="bi bi-arrow-up-right"></i></span></a>
+    <a class="stat-card" href="{{ url_for('exchange_hub') }}"><span class="stat-icon stat-green"><i class="bi bi-arrow-left-right"></i></span><span class="stat-copy"><small>AVAILABLE EXCHANGE ITEMS</small><strong>{{ exchange_count }}</strong><span>Browse student listings <i class="bi bi-arrow-up-right"></i></span></span><span class="stat-trend"><i class="bi bi-arrow-up-right"></i></span></a>
+    <a class="stat-card" href="{{ url_for('lost_found_hub') }}"><span class="stat-icon stat-rose"><i class="bi bi-search-heart"></i></span><span class="stat-copy"><small>ACTIVE LOST &amp; FOUND</small><strong>{{ lost_found_count }}</strong><span>View campus reports <i class="bi bi-arrow-up-right"></i></span></span><span class="stat-trend"><i class="bi bi-arrow-up-right"></i></span></a>
+  </section>
+  <section class="community-actions">
+    <a class="btn btn-primary" href="{{ url_for('exchange_create') }}"><i class="bi bi-plus-lg"></i> List an item</a>
+    <a class="btn btn-outline-primary" href="{{ url_for('lost_found_create') }}"><i class="bi bi-plus-lg"></i> Report lost or found</a>
+  </section>
+  <div class="dashboard-grid">
+    <section class="content-card notices-panel">
+      <div class="section-heading"><div><span class="eyebrow">STAY IN THE LOOP</span><h2>Latest notices</h2></div><a class="text-link" href="{{ url_for('notices') }}">All notices <i class="bi bi-arrow-right"></i></a></div>
+      {% for notice in notices %}
+      <a class="notice-row" href="{{ url_for('notice_detail', notice_id=notice.id) }}"><span class="notice-symbol"><i class="bi bi-megaphone"></i></span><span class="notice-copy"><strong>{{ notice.title }}</strong><small>{{ notice.category }} <span>·</span> {{ notice.published_at }}</small></span><i class="bi bi-chevron-right notice-chevron"></i></a>
+      {% else %}<div class="empty-state compact-empty"><span class="empty-icon"><i class="bi bi-megaphone"></i></span><strong>No notices yet</strong><p>New campus updates will appear here.</p></div>{% endfor %}
+    </section>
+    <section class="content-card quick-panel">
+      <div class="section-heading"><div><span class="eyebrow">PICK UP WHERE YOU LEFT OFF</span><h2>Quick access</h2></div></div>
+      <a class="quick-link" href="{{ url_for('internships') }}"><span class="quick-icon quick-blue"><i class="bi bi-briefcase"></i></span><span><strong>Internship hub</strong><small>Find your next experience</small></span><i class="bi bi-arrow-up-right"></i></a>
+      <a class="quick-link" href="{{ url_for('placements') }}"><span class="quick-icon quick-purple"><i class="bi bi-people"></i></span><span><strong>Placement hub</strong><small>Get ready for what’s next</small></span><i class="bi bi-arrow-up-right"></i></a>
+      <a class="quick-link" href="{{ url_for('profile') }}"><span class="quick-icon quick-slate"><i class="bi bi-person"></i></span><span><strong>Your profile</strong><small>Keep your details up to date</small></span><i class="bi bi-arrow-up-right"></i></a>
+      <div class="tip-card"><i class="bi bi-lightbulb"></i><span><strong>A little reminder</strong><small>Check application deadlines early so you have time to prepare.</small></span></div>
+    </section>
+  </div>
+  <div class="dashboard-grid lower-grid">
+    <section class="content-card">
+      <div class="section-heading"><div><span class="eyebrow">TAKE THE NEXT STEP</span><h2>Recent internships</h2></div><a class="text-link" href="{{ url_for('internships') }}">View all <i class="bi bi-arrow-right"></i></a></div>
+      {% for item in internships %}
+      <a class="opportunity-row" href="{{ url_for('internship_detail', internship_id=item.id) }}"><span class="company-avatar">{{ item.company[:1] }}</span><span class="opportunity-copy"><strong>{{ item.title }}</strong><small>{{ item.company }} <span>·</span> {{ item.location }}</small></span><span class="deadline-pill">Due {{ item.deadline }}</span></a>
+      {% else %}<div class="empty-state compact-empty"><span class="empty-icon"><i class="bi bi-briefcase"></i></span><strong>No open internships</strong><p>Check back for new opportunities.</p></div>{% endfor %}
+    </section>
+    <section class="content-card">
+      <div class="section-heading"><div><span class="eyebrow">MARK YOUR CALENDAR</span><h2>Upcoming placement activity</h2></div><a class="text-link" href="{{ url_for('placements') }}">View all <i class="bi bi-arrow-right"></i></a></div>
+      {% for item in placements %}
+      <a class="drive-row" href="{{ url_for('placement_detail', placement_id=item.id) }}"><span class="drive-date"><small>{{ item.drive_date[5:7] }}</small><strong>{{ item.drive_date[8:10] }}</strong></span><span class="opportunity-copy"><strong>{{ item.company }}</strong><small>{{ item.role }} <span>·</span> {{ item.location }}</small></span><i class="bi bi-chevron-right notice-chevron"></i></a>
+      {% else %}<div class="empty-state compact-empty"><span class="empty-icon"><i class="bi bi-calendar-event"></i></span><strong>No upcoming drives</strong><p>Placement activities will appear here.</p></div>{% endfor %}
+    </section>
+  </div>
+  <div class="dashboard-grid lower-grid community-dashboard">
+    <section class="content-card">
+      <div class="section-heading"><div><span class="eyebrow">STUDENT-TO-STUDENT</span><h2>Recent exchange listings</h2></div><a class="text-link" href="{{ url_for('exchange_hub') }}">Explore <i class="bi bi-arrow-right"></i></a></div>
+      {% for item in recent_exchange %}
+      <a class="opportunity-row" href="{{ url_for('exchange_detail', listing_id=item.id) }}"><span class="company-avatar">{{ item.title[:1]|upper }}</span><span class="opportunity-copy"><strong>{{ item.title }}</strong><small>{{ item.category }} <span>·</span> {{ item.seller_name }}</small></span><span class="deadline-pill">{% if item.price == 0 %}Free{% else %}${{ '%.2f'|format(item.price) }}{% endif %}</span></a>
+      {% else %}<div class="empty-state compact-empty"><span class="empty-icon"><i class="bi bi-arrow-left-right"></i></span><strong>No listings yet</strong><p>Be the first to share an item.</p></div>{% endfor %}
+    </section>
+    <section class="content-card">
+      <div class="section-heading"><div><span class="eyebrow">LOOKING OUT FOR EACH OTHER</span><h2>Recent lost &amp; found</h2></div><a class="text-link" href="{{ url_for('lost_found_hub') }}">View reports <i class="bi bi-arrow-right"></i></a></div>
+      {% for report in recent_lost_found %}
+      <a class="opportunity-row" href="{{ url_for('lost_found_detail', report_id=report.id) }}"><span class="report-type-badge {{ 'found-badge' if report.report_type == 'Found' else 'lost-badge' }}">{{ report.report_type }}</span><span class="opportunity-copy"><strong>{{ report.item_name }}</strong><small>{{ report.location }} <span>·</span> {{ report.reporter_name }}</small></span><i class="bi bi-chevron-right notice-chevron"></i></a>
+      {% else %}<div class="empty-state compact-empty"><span class="empty-icon"><i class="bi bi-search-heart"></i></span><strong>No active reports</strong><p>Lost and found reports will show here.</p></div>{% endfor %}
+    </section>
+  </div>
+</div>
+{% endblock %}

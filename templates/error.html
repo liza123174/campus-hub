@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{ error.code }}{% endblock %}
+{% block content %}
+<div class="page-wrap error-wrap">
+  <div class="content-card empty-state error-card"><span class="empty-icon"><i class="bi bi-compass"></i></span><span class="eyebrow">{{ error.code }} · PAGE NOT AVAILABLE</span><h1>{{ error.name }}</h1><p>{{ error.description }}</p><a class="btn btn-primary" href="{{ url_for('dashboard') if current_student else url_for('login') }}">Return to Campus Hub</a></div>
+</div>
+{% endblock %}

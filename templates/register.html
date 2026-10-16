@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block content %}
+<div class="auth-shell">
+  <section class="auth-intro">
+    <a class="brand auth-brand" href="{{ url_for('login') }}"><span class="brand-mark"><i class="bi bi-mortarboard-fill"></i></span><span>campus<span class="brand-light">hub</span></span></a>
+    <div class="auth-hero">
+      <span class="eyebrow light-eyebrow"><span></span> YOUR CAMPUS, CONNECTED</span>
+      <h1>Your next chapter<br>starts <em>right here.</em></h1>
+      <p>Keep campus life in reach, from the latest notice to your next career opportunity.</p>
+      <div class="auth-quote"><i class="bi bi-stars"></i><span>One campus. A hundred ways to grow.</span></div>
+    </div>
+    <div class="auth-decoration decoration-one"></div><div class="auth-decoration decoration-two"></div>
+    <div class="auth-footnote">CAMPUS HUB <span>·</span> STUDENT PORTAL</div>
+  </section>
+  <section class="auth-form-side">
+    <div class="auth-form-wrap">
+      <div class="auth-mobile-brand"><a class="brand" href="{{ url_for('login') }}"><span class="brand-mark"><i class="bi bi-mortarboard-fill"></i></span><span>campus<span class="brand-light">hub</span></span></a></div>
+      <div class="auth-heading"><span class="eyebrow">GET STARTED</span><h2>Create your account</h2><p>A few details and you’re ready to explore.</p></div>
+      <form method="post" class="form-stack">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="name">Full name</label><div class="input-icon"><i class="bi bi-person"></i><input id="name" name="name" value="{{ form.get('name', '') }}" placeholder="Jordan Lee" autocomplete="name" maxlength="80" required></div>
+        <label for="email">College email</label><div class="input-icon"><i class="bi bi-envelope"></i><input id="email" name="email" type="email" value="{{ form.get('email', '') }}" placeholder="you@college.edu" autocomplete="email" maxlength="254" required></div>
+        <label for="department">Department</label><div class="input-icon"><i class="bi bi-book"></i><input id="department" name="department" value="{{ form.get('department', '') }}" placeholder="e.g. Computer Science" maxlength="80" required></div>
+        <label for="password">Password</label><div class="input-icon"><i class="bi bi-lock"></i><input id="password" name="password" type="password" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required></div>
+        <button class="btn btn-primary btn-auth" type="submit">Create account <i class="bi bi-arrow-right"></i></button>
+      </form>
+      <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+      <div class="demo-note"><i class="bi bi-shield-check"></i> Your password is securely hashed before it is stored.</div>
+    </div>
+  </section>
+</div>
+{% endblock %}

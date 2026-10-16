@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ report.item_name }} · Lost &amp; Found{% endblock %}
+{% block content %}
+<div class="page-wrap detail-wrap">
+  <div class="topbar"><a class="back-link" href="{{ url_for('lost_found_hub') }}"><i class="bi bi-arrow-left"></i> Back to Lost &amp; Found</a><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div>
+  <article class="content-card community-detail">
+    {% if report.image_filename %}<img class="detail-community-image" src="{{ url_for('static', filename='uploads/' ~ report.image_filename) }}" alt="{{ report.item_name }}">{% endif %}
+    <div class="community-detail-body">
+      <div class="listing-meta"><span class="report-type-badge {{ 'found-badge' if report.report_type == 'Found' else 'lost-badge' }}">{{ report.report_type }}</span><span class="status-badge {{ 'available-badge' if report.status == 'active' else 'inactive-badge' }}">{{ report.status|title }}</span><span class="category-badge">{{ report.category }}</span></div>
+      <h1>{{ report.item_name }}</h1>
+      <div class="detail-facts"><div><small>LOCATION</small><strong>{{ report.location }}</strong></div><div><small>DATE LOST / FOUND</small><strong>{{ report.incident_date }}</strong></div><div><small>REPORTED</small><strong>{{ report.created_at[:10] }}</strong></div></div>
+      <h2>Description</h2><div class="detail-body">{{ report.description }}</div><div class="detail-byline">Reported by {{ report.reporter_name }}</div>
+      {% if report.student_id == current_student.id %}
+      <div class="owner-controls">
+        <a class="btn btn-outline-primary" href="{{ url_for('lost_found_edit', report_id=report.id) }}"><i class="bi bi-pencil"></i> Edit report</a>
+        <form method="post" action="{{ url_for('lost_found_status', report_id=report.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="status" value="{{ 'resolved' if report.status == 'active' else 'active' }}"><button class="btn btn-outline-secondary" type="submit">{{ 'Mark resolved' if report.status == 'active' else 'Reopen report' }}</button></form>
+        <form method="post" action="{{ url_for('lost_found_delete', report_id=report.id) }}" data-confirm="Delete this report? This cannot be undone."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Delete</button></form>
+      </div>
+      {% elif report.status == 'active' %}
+      <div class="safe-contact">
+        <h2>Contact the reporter</h2><p>Your email stays private. Send a message here; the reporter can read it on this report page.</p>
+        <form method="post" action="{{ url_for('community_contact', entity_type='lost_found', entity_id=report.id) }}" class="contact-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label class="visually-hidden" for="contact-message">Message to reporter</label><textarea class="form-control" id="contact-message" name="message" maxlength="500" rows="3" required placeholder="Hi, I may be able to help with this item..."></textarea><button class="btn btn-primary" type="submit">Send private request</button></form>
+      </div>
+      {% endif %}
+      {% if contact_requests %}<section class="contact-inbox"><h2>Private contact requests</h2>{% for contact in contact_requests %}<div class="contact-message"><strong>{{ contact.sender_name }}</strong><small>{{ contact.created_at }}</small><p>{{ contact.message }}</p></div>{% endfor %}</section>{% endif %}
+    </div>
+  </article>
+</div>
+{% endblock %}

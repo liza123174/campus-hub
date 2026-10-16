@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit report' if report else 'Create report' }}{% endblock %}
+{% block content %}
+<div class="page-wrap detail-wrap">
+  <div class="topbar"><a class="back-link" href="{{ url_for('lost_found_hub') }}"><i class="bi bi-arrow-left"></i> Back to Lost &amp; Found</a><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div>
+  <section class="content-card community-form-card">
+    <div class="page-intro"><span class="eyebrow">HELP YOUR CAMPUS COMMUNITY</span><h1>{{ 'Edit your report' if report else 'Report an item' }}</h1><p>Share enough detail for someone to recognize the item. Keep sensitive information out of the public description.</p></div>
+    <form method="post" enctype="multipart/form-data" class="community-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="community-fields-row">
+        <div><label for="report_type">Report type</label><select class="form-select" id="report_type" name="report_type" required><option value="">Choose one</option><option value="Lost" {% if form.get('report_type') == 'Lost' %}selected{% endif %}>I lost this item</option><option value="Found" {% if form.get('report_type') == 'Found' %}selected{% endif %}>I found this item</option></select></div>
+        <div><label for="item_name">Item name</label><input class="form-control" id="item_name" name="item_name" value="{{ form.get('item_name', '') }}" maxlength="100" required placeholder="e.g. Blue water bottle"></div>
+      </div>
+      <label for="description">Description</label><textarea class="form-control" id="description" name="description" rows="5" maxlength="2000" required placeholder="Describe distinguishing features. Avoid posting personal or sensitive details.">{{ form.get('description', '') }}</textarea>
+      <div class="community-fields-row">
+        <div><label for="category">Category</label><select class="form-select" id="category" name="category" required><option value="">Choose a category</option>{% for category in categories %}<option value="{{ category }}" {% if form.get('category') == category %}selected{% endif %}>{{ category }}</option>{% endfor %}</select></div>
+        <div><label for="location">Location</label><input class="form-control" id="location" name="location" value="{{ form.get('location', '') }}" maxlength="120" required placeholder="e.g. Main library, first floor"></div>
+      </div>
+      <div class="community-fields-row">
+        <div><label for="incident_date">Date lost or found</label><input class="form-control" id="incident_date" name="incident_date" type="date" value="{{ form.get('incident_date', today) }}" max="{{ today }}" required></div>
+        <div>
+          {% if report and report.image_filename %}<label>Current image</label><div class="existing-image"><img src="{{ url_for('static', filename='uploads/' ~ report.image_filename) }}" alt="Current {{ report.item_name }} image"><span>Image stays unless you upload a replacement.</span></div>{% endif %}
+          <label for="image">Image <span class="optional-label">Optional</span></label><input class="form-control" id="image" name="image" type="file" accept="image/png,image/jpeg,image/gif,image/webp"><small class="field-help">PNG, JPEG, GIF, or WebP · maximum 2 MB</small>
+        </div>
+      </div>
+      <div class="form-actions"><button class="btn btn-primary" type="submit">{{ 'Save changes' if report else 'Post report' }}</button><a class="btn btn-light" href="{{ url_for('lost_found_detail', report_id=report.id) if report else url_for('lost_found_hub') }}">Cancel</a></div>
+    </form>
+  </section>
+</div>
+{% endblock %}

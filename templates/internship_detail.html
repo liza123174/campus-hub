@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ internship.title }}{% endblock %}
+{% block content %}
+<div class="page-wrap detail-wrap">
+  <div class="topbar"><a class="back-link" href="{{ url_for('internships') }}"><i class="bi bi-arrow-left"></i> Back to internships</a><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div>
+  <article class="content-card detail-card">
+    <div class="detail-icon"><i class="bi bi-briefcase"></i></div><div class="listing-meta"><span class="category-badge">{{ internship.category }} · Demo listing</span><span>Apply by {{ internship.deadline }}</span></div>
+    <h1>{{ internship.title }}</h1><p class="detail-subtitle">{{ internship.company }}</p>
+    <div class="detail-facts"><div><small>LOCATION</small><strong>{{ internship.location }}</strong></div><div><small>WORK MODE</small><strong>{{ internship.work_mode }}</strong></div><div><small>DURATION</small><strong>{{ internship.duration }}</strong></div></div>
+    <h2>About this opportunity</h2><div class="detail-body">{{ internship.description }}</div>
+    <h2>Eligibility</h2><div class="detail-body">{{ internship.eligibility }}</div>
+    {% if internship.application_url %}<a class="btn btn-primary detail-action" href="{{ internship.application_url }}" target="_blank" rel="noopener noreferrer">Visit application <i class="bi bi-box-arrow-up-right"></i></a>
+    {% else %}<div class="detail-callout"><i class="bi bi-info-circle"></i><span>This is demo data and does not have a live application link. Check with your campus career office for verified opportunities.</span></div>{% endif %}
+  </article>
+</div>
+{% endblock %}

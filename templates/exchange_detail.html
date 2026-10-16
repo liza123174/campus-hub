@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ listing.title }}{% endblock %}
+{% block content %}
+<div class="page-wrap detail-wrap">
+  <div class="topbar"><a class="back-link" href="{{ url_for('exchange_hub') }}"><i class="bi bi-arrow-left"></i> Back to Exchange Hub</a><a class="topbar-avatar" href="{{ url_for('profile') }}">{{ current_student.name[:1]|upper }}</a></div>
+  <article class="content-card community-detail">
+    {% if listing.image_filename %}<img class="detail-community-image" src="{{ url_for('static', filename='uploads/' ~ listing.image_filename) }}" alt="{{ listing.title }}">{% endif %}
+    <div class="community-detail-body">
+      <div class="listing-meta"><span class="category-badge">{{ listing.category }}</span><span class="status-badge {{ 'available-badge' if listing.status == 'available' else 'inactive-badge' }}">{{ listing.status|title }}</span></div>
+      <h1>{{ listing.title }}</h1><div class="item-price detail-price">{% if listing.price == 0 %}Free{% else %}${{ '%.2f'|format(listing.price) }}{% endif %}</div>
+      <div class="detail-byline">Posted by {{ listing.seller_name }} <span>·</span> {{ listing.created_at[:10] }}</div>
+      <h2>About this item</h2><div class="detail-body">{{ listing.description }}</div>
+      {% if listing.student_id == current_student.id %}
+      <div class="owner-controls">
+        <a class="btn btn-outline-primary" href="{{ url_for('exchange_edit', listing_id=listing.id) }}"><i class="bi bi-pencil"></i> Edit listing</a>
+        {% if listing.status == 'available' %}<form method="post" action="{{ url_for('exchange_status', listing_id=listing.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="status" value="sold"><button class="btn btn-outline-secondary" type="submit">Mark sold</button></form><form method="post" action="{{ url_for('exchange_status', listing_id=listing.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="status" value="exchanged"><button class="btn btn-outline-secondary" type="submit">Mark exchanged</button></form>
+        {% else %}<form method="post" action="{{ url_for('exchange_status', listing_id=listing.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="status" value="available"><button class="btn btn-outline-secondary" type="submit">Mark available</button></form>{% endif %}
+        <form method="post" action="{{ url_for('exchange_delete', listing_id=listing.id) }}" data-confirm="Delete this listing? This cannot be undone."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Delete</button></form>
+      </div>
+      {% elif listing.status == 'available' %}
+      <div class="safe-contact">
+        <h2>Contact the student</h2><p>Your email stays private. Send a message here; the seller can read it on this listing page.</p>
+        <form method="post" action="{{ url_for('community_contact', entity_type='exchange', entity_id=listing.id) }}" class="contact-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label class="visually-hidden" for="contact-message">Message to seller</label><textarea class="form-control" id="contact-message" name="message" maxlength="500" rows="3" required placeholder="Hi, I’m interested in this item. Is it still available?"></textarea><button class="btn btn-primary" type="submit">Send private request</button></form>
+      </div>
+      {% endif %}
+      {% if contact_requests %}<section class="contact-inbox"><h2>Private contact requests</h2>{% for contact in contact_requests %}<div class="contact-message"><strong>{{ contact.sender_name }}</strong><small>{{ contact.created_at }}</small><p>{{ contact.message }}</p></div>{% endfor %}</section>{% endif %}
+    </div>
+  </article>
+</div>
+{% endblock %}
